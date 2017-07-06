@@ -1,0 +1,27 @@
+{
+    "variables": {
+        "aws_access_key": "{{env `AWS_ACCESS_KEY_ID`}}",
+        "aws_secret_key": "{{env `AWS_SECRET_ACCESS_KEY`}}"
+    },
+    "builders": [{
+        "type": "amazon-ebs",
+        "access_key": "{{user `aws_access_key`}}",
+        "secret_key": "{{user `aws_secret_key`}}",
+        "region": "us-east-1",
+        "source_ami": "ami-6d1c2007",
+        "instance_type": "t2.small",
+        "ssh_username": "centos",
+        "ami_name": "AMI_{{timestamp}}",
+        "ssh_pty": true
+    }],
+    "provisioners": [{
+        "type": "shell",
+        "execute_command": "sudo sh -c '{{ .Vars }} {{ .Path }}'",
+        "inline": [
+                "sleep 10",
+                "rm -rf /root/.ssh/authorized_keys",
+                "yum install -y epel-release",
+                "yum install -y ansible"
+        ]
+    }]
+}
